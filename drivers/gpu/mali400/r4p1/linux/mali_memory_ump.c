@@ -36,7 +36,6 @@ static int mali_ump_map(struct mali_session_data *session, mali_mem_allocation *
 	ump_mem = descriptor->ump_mem.handle;
 	MALI_DEBUG_ASSERT(UMP_DD_HANDLE_INVALID != ump_mem);
 
-	nr_blocks = ump_dd_phys_block_count_get(ump_mem);
 	if (nr_blocks == 0) {
 		MALI_DEBUG_PRINT(1, ("No block count\n"));
 		return -EINVAL;
@@ -45,11 +44,6 @@ static int mali_ump_map(struct mali_session_data *session, mali_mem_allocation *
 	ump_blocks = _mali_osk_malloc(sizeof(*ump_blocks) * nr_blocks);
 	if (NULL == ump_blocks) {
 		return -ENOMEM;
-	}
-
-	if (UMP_DD_INVALID == ump_dd_phys_blocks_get(ump_mem, ump_blocks, nr_blocks)) {
-		_mali_osk_free(ump_blocks);
-		return -EFAULT;
 	}
 
 	pagedir = session->page_directory;
@@ -102,7 +96,6 @@ void mali_ump_unmap(struct mali_session_data *session, mali_mem_allocation *desc
 
 	mali_mem_mali_map_free(descriptor);
 
-	ump_dd_reference_release(ump_mem);
 	return;
 }
 
@@ -129,13 +122,10 @@ _mali_osk_errcode_t _mali_ukk_attach_ump_mem(_mali_uk_attach_ump_mem_s *args)
 			 ("Requested to map ump memory with secure id %d into virtual memory 0x%08X, size 0x%08X\n",
 			  args->secure_id, args->mali_address, args->size));
 
-	ump_mem = ump_dd_handle_create_from_secure_id((int)args->secure_id);
-
 	if (UMP_DD_HANDLE_INVALID == ump_mem) MALI_ERROR(_MALI_OSK_ERR_FAULT);
 
 	descriptor = mali_mem_descriptor_create(session, MALI_MEM_UMP);
 	if (NULL == descriptor) {
-		ump_dd_reference_release(ump_mem);
 		MALI_ERROR(_MALI_OSK_ERR_NOMEM);
 	}
 
@@ -154,7 +144,6 @@ _mali_osk_errcode_t _mali_ukk_attach_ump_mem(_mali_uk_attach_ump_mem_s *args)
 	ret = mali_ump_map(session, descriptor);
 	if (0 != ret) {
 		_mali_osk_mutex_signal(session->memory_lock);
-		ump_dd_reference_release(ump_mem);
 		mali_mem_descriptor_destroy(descriptor);
 		MALI_ERROR(_MALI_OSK_ERR_NOMEM);
 	}
@@ -163,7 +152,6 @@ _mali_osk_errcode_t _mali_ukk_attach_ump_mem(_mali_uk_attach_ump_mem_s *args)
 
 
 	if (_MALI_OSK_ERR_OK != mali_descriptor_mapping_allocate_mapping(session->descriptor_mapping, descriptor, &md)) {
-		ump_dd_reference_release(ump_mem);
 		mali_mem_descriptor_destroy(descriptor);
 		MALI_ERROR(_MALI_OSK_ERR_FAULT);
 	}
@@ -211,3 +199,4 @@ _mali_osk_errcode_t _mali_ukk_release_ump_mem(_mali_uk_release_ump_mem_s *args)
 
 	MALI_SUCCESS;
 }
+

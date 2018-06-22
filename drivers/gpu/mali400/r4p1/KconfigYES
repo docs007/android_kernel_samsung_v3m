@@ -71,7 +71,7 @@ config MALI_SHARED_INTERRUPTS
 config MALI_PMU_PARALLEL_POWER_UP
 	bool "Power up Mali PMU domains in parallel"
 	depends on MALI400
-	default y
+	default n 
 	---help---
 	  This makes the Mali driver power up all PMU power domains in parallel, instead of
 	  powering up domains one by one, with a slight delay in between. Powering on all power
