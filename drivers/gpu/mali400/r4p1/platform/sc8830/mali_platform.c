@@ -43,7 +43,7 @@
 
 #define GPU_GLITCH_FREE_DFS		0
 
-#define UP_THRESHOLD			9/10
+#define UP_THRESHOLD			8/10
 
 #define GPU_HARDWARE_MIN_DIVISION	1
 #define GPU_HARDWARE_MAX_DIVISION	4
@@ -136,26 +136,26 @@ static struct gpu_clock_source  gpu_clk_src[]=
 		.clk_src=NULL,
 	},
 	{
+		.name="clk_460m8",
+		.freq=460800,
+		.freq_select=5,
+		.clk_src=NULL,
+	},
+	{
 		.name="clk_384m",
 		.freq=384000,
-		.freq_select=5,
+		.freq_select=4,
 		.clk_src=NULL,
 	},
 	{
 		.name="clk_312m",
 		.freq=312000,
-		.freq_select=4,
+		.freq_select=2,
 		.clk_src=NULL,
 	},
 	{
 		.name="clk_256m",
 		.freq=256000,
-		.freq_select=2,
-		.clk_src=NULL,
-	},
-	{
-		.name="clk_208m",
-		.freq=208000,
 		.freq_select=1,
 		.clk_src=NULL,
 	},
@@ -247,7 +247,7 @@ static struct gpu_dfs_context gpu_dfs_ctx=
 /*tshark 28nm*/
 	.dfs_freq_list=
 	{
-		/*index:  0 freq:512000 freq_select:  6  div_select:  1*/
+		/*index:  0 freq:460800 freq_select:  6  div_select:  1*/
 		&dfs_freq_full_list[0],
 		/*index:  1 freq:384000 freq_select:  5  div_select:  1*/
 		&dfs_freq_full_list[4],
@@ -420,7 +420,7 @@ static void gpu_dfs_full_list_generate(void)
 
 /*
 	frequency list for tshark 28nm:
-	index:  0 freq:512000 freq_select:  6  div_select:  1 up:414720  down:     0
+	index:  0 freq:460800 freq_select:  6  div_select:  1 up:414720  down:     0
 	index:  1 freq:230400 freq_select:  6  div_select:  2 up:207360  down:     0
 	index:  2 freq:153600 freq_select:  6  div_select:  3 up:138240  down:     0
 	index:  3 freq:115200 freq_select:  6  div_select:  4 up:103680  down:     0
@@ -447,7 +447,7 @@ static void gpu_dfs_full_list_generate(void)
 */
 
 /* sharkl 28nm
-	index:  0 freq:512000 freq_select:  5  div_select:  1 up:512000  down:     0
+	index:  0 freq:512000 freq_select:  5  div_select:  1 up:460800  down:     0
 	index:  1 freq:256000 freq_select:  5  div_select:  2 up:230400  down:     0
 	index:  2 freq:170666 freq_select:  5  div_select:  3 up:153600  down:     0
 	index:  3 freq:128000 freq_select:  5  div_select:  4 up:115200  down:     0
